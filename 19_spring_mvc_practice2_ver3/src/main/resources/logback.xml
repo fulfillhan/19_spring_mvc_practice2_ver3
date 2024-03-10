@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="LOG_PATH" value="${user.home}/logs/appication/application.log" />
+	
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="DAILY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>app.log.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level
+				%logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+    
+ 	<!-- log4jdbc 설정 -->
+	<logger name="jdbc.sqlonly" level="info" >
+	</logger><!--sql만  -->
+	<logger name="jdbc.sqltiming" level="off" /><!-- 실행된시간까지 -->
+	<logger name="jdbc.audit" level="off" /><!-- 내부정보가 모두 나온다 -->
+	<logger name="jdbc.resultset" level="off" /><!-- select 관련된 반환값(select 한정) -->
+	<logger name="jdbc.resultsettable" level="info" >
+		<appender-ref ref="DAILY_FILE"/>
+	</logger><!-- select 결과값을 테이플형태로 -->
+	<logger name="jdbc.connection" level="off" />
+	
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+	</root>
+	
+</configuration>

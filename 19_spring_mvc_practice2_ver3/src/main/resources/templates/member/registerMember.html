@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>register</title>
+<script th:src="@{/ckeditor/ckeditor.js}"></script>
+<script th:src="@{/jquery/jquery-3.6.1.min.js}"></script>
+<script th:src="@{http://dmaps.daum.net/map_js_init/postcode.v2.js}"></script>
+<script>
+
+	function execDaumPostcode() {
+	    new daum.Postcode({
+	        oncomplete: function(data) {
+	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+	
+	            // 도로명 주소의 노출 규칙에 따라 주소를 조합한다.
+	            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+	            var fullRoadAddr = data.roadAddress; // 도로명 주소 변수
+	            var extraRoadAddr = ''; // 도로명 조합형 주소 변수
+	
+	            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+	            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+	            if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+	                extraRoadAddr += data.bname;
+	            }
+	            // 건물명이 있고, 공동주택일 경우 추가한다.
+	            if (data.buildingName !== '' && data.apartment === 'Y'){
+	               extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+	            }
+	            // 도로명, 지번 조합형 주소가 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+	            if (extraRoadAddr !== ''){
+	                extraRoadAddr = ' (' + extraRoadAddr + ')';
+	            }
+	            // 도로명, 지번 주소의 유무에 따라 해당 조합형 주소를 추가한다.
+	            if (fullRoadAddr !== ''){
+	                fullRoadAddr += extraRoadAddr;
+	            }
+	
+	            // 우편번호와 주소 정보를 해당 필드에 넣는다.
+	            document.getElementById('zipcode').value = data.zonecode; //5자리 새우편번호 사용
+	            document.getElementById('roadAddress').value = fullRoadAddr;
+	            document.getElementById('jibunAddress').value = data.jibunAddress;
+	
+	        }
+	    }).open();
+	}
+	
+</script>
+
+<script>
+
+	let isPassId = false;
+	let isPassPasswd = false;
+	
+	
+	$().ready(function() {
+		
+		$("#isValidId").click(function(){
+			
+			let memberId = $("#memberId").val();
+		    if (memberId == '') {
+		    	$("#isValidIdMsg").html("<span style='color:red;'>아이디를 입력하세요.</span>");
+		   		return;   
+		    }
+		   
+		    $.ajax({
+		    	
+		       type : "post",
+		       url : "/member/validId",
+		       data : {"memberId" : memberId},
+		       success : function(validIdCeck) {
+		    	   
+		          if (validIdCeck == "y") {
+		          	$("#isValidIdMsg").html("<span style='color:green;'>사용가능한 아이디입니다.</span>");
+		          	isPassId = true;
+		          }
+		          else {
+	        		$("#isValidIdMsg").html("<span style='color:red;'>중복된 아이디입니다.</span>");
+	        		isPassId = false;
+		          }
+		          
+		       }
+		       
+		    });
+		    
+		});	
+		
+		
+		$("#confirmPasswd").blur(function(){
+			
+			let passwd = $("#passwd").val();
+			let confirmPasswd = $("#confirmPasswd").val();
+			
+			if (passwd == confirmPasswd) {
+				$("#isValidPasswdMsg").html("<span style='color:green;'>패스워드가 일치합니다.</span>");
+				isPassPasswd = true;
+			}
+			else {
+				$("#isValidPasswdMsg").html("<span style='color:red;'>패스워드가 일치하지 않습니다.</span>");
+				isPassPasswd = false;
+			}
+			
+		});	
+		
+	});
+	
+			// form 체크
+	function checkFormValidation() {
+
+		if (!isPassId) {
+			alert("아이디를 확인해주세요.");
+			$("#memberId").focus();
+			return false;
+		}
+		
+		if (!isPassPasswd) {
+			alert("패스워드를 확인해주세요.");
+			$("#confirmPasswd").focus();
+			return false;
+		}
+	}
+	
+</script>
+</head>
+<body>
+
+	<div align="center">
+		<form th:action="@{/member/registerMember}" th:onsubmit="return checkFormValidation();" method="post" enctype="multipart/form-data">
+			<h3>회원가입</h3>
+			<table border="1">
+				<tr>
+					<td>아이디</td>
+					<td>
+			            <input type="text" name="memberId" id="memberId" placeholder="아이디" required/>&emsp;
+			            <input type="button" id="isValidId" value="중복확인" />&emsp;
+			            <span id="isValidIdMsg"></span>
+			        </td>
+			    </tr>
+		        <tr>
+			        <td>비밀번호</td>
+			        <td><input type="password" id="passwd" name="passwd" placeholder="비밀번호" required/></td>
+		        </tr>
+		        <tr>
+			        <td>비밀번호 확인</td>
+			        <td>
+			        	<input type="password" id="confirmPasswd" placeholder="비밀번호확인" required/>&emsp;
+			        	<span id="isValidPasswdMsg"></span>
+			        </td>
+		        </tr>
+		        <tr>
+			        <td>이름</td>
+			        <td><input type="text" name="memberNm" placeholder="이름" required/></td>
+		        </tr>                
+			    <tr>
+			        <td>성별</td>
+			        <td>
+			        	<input type="radio" name="sex" value="m" checked /> 남성&emsp;&emsp;&emsp;
+						<input type="radio" name="sex" value="w" />여성
+			        </td>
+		        </tr>                              
+		        <tr>
+			        <td>생년월일</td>
+			        <td>
+						<input type="date" name="birthAt">
+			        </td>
+		        </tr>                        
+		        <tr>
+			        <td>핸드폰 번호</td>
+			        <td>
+						<input type="text" name="hp" placeholder="010-0000-0000" required >
+						<input type="checkbox" id="smsstsYn" name="smsstsYn"  value="y" checked/>
+		                스프링에서 발송하는 SMS 소식을 수신합니다.
+			        </td>
+		        </tr>                         
+		        <tr>
+			        <td>이메일</td>
+			        <td>
+			        	<input type="email" name="email" required>  
+		                <input type="checkbox" id="emailstsYn" name="emailstsYn" value="y" checked/>
+		                스프링에서 발송하는 E-mail을 수신합니다.
+			        </td>
+		        </tr>
+		        <tr>
+			        <td>프로필</td>
+			        <td><input type="file" name="uploadProfile" required/></td>
+		        </tr>                              
+		        <tr>
+			        <td>주소</td>
+			        <td>
+			        	<input type="text" placeholder="우편번호 입력" id="zipcode" name="zipcode" >
+		                <input type="button" th:onclick="javascript:execDaumPostcode()" value="검색">
+		                <br><br>
+		                            도로명 주소 : <input type="text" name="roadAddress" id="roadAddress" size="60"> <br>
+						지번 주소 : <input type="text"  name="jibunAddress" id="jibunAddress" size="60"> <br>
+						나머지 주소: <input type="text" name="namujiAddress" id="namujiAddress" size="60"/>
+			        </td>
+		        </tr>
+		        <tr>
+			        <td>기타</td>
+			        <td>
+			        	<textarea rows="10" cols="10" name="etc"></textarea>
+			        	<script>CKEDITOR.replace('etc');</script>
+			        </td>
+		        </tr>                                     
+		        <tr>
+			        <td colspan="2" align="center">
+			        	<input type="submit" value="회원가입하기"  >
+			        </td>
+			    </tr>
+			    <tr>
+			        <td colspan="2" align="center">
+			        	이미 회원가입이 되어있다면 ? <a th:href="@{/member/loginMember}"><strong>로그인하기</strong></a>
+			        </td>
+		        </tr>                            
+		     </table>
+	     </form>
+	</div>
+
+</body>
+</html>

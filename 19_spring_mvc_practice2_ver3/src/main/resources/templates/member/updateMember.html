@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>modify</title>
+<script th:src="@{/ckeditor/ckeditor.js}"></script>
+<script th:src="@{http://dmaps.daum.net/map_js_init/postcode.v2.js}"></script>
+<script>
+	function execDaumPostcode() {
+	    new daum.Postcode({
+	        oncomplete: function(data) {
+	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+	
+	            // 도로명 주소의 노출 규칙에 따라 주소를 조합한다.
+	            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+	            var fullRoadAddr = data.roadAddress; // 도로명 주소 변수
+	            var extraRoadAddr = ''; // 도로명 조합형 주소 변수
+	
+	            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+	            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+	            if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+	                extraRoadAddr += data.bname;
+	            }
+	            // 건물명이 있고, 공동주택일 경우 추가한다.
+	            if (data.buildingName !== '' && data.apartment === 'Y'){
+	               extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+	            }
+	            // 도로명, 지번 조합형 주소가 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+	            if (extraRoadAddr !== ''){
+	                extraRoadAddr = ' (' + extraRoadAddr + ')';
+	            }
+	            // 도로명, 지번 주소의 유무에 따라 해당 조합형 주소를 추가한다.
+	            if (fullRoadAddr !== ''){
+	                fullRoadAddr += extraRoadAddr;
+	            }
+	
+	            // 우편번호와 주소 정보를 해당 필드에 넣는다.
+	            document.getElementById('zipcode').value = data.zonecode; //5자리 새우편번호 사용
+	            document.getElementById('roadAddress').value = fullRoadAddr;
+	            document.getElementById('jibunAddress').value = data.jibunAddress;
+	
+	        }
+	    }).open();
+	}
+</script>
+</head>
+<body>
+
+	<div align="center">
+		<h3 th:text="|${memberDTO.memberId} 님의 정보 수정|"></h3>
+		<form th:action="@{/member/updateMember}" th:object="${memberDTO}" method="post" enctype="multipart/form-data">
+			<table border="1">
+		         <tr>
+			        <td><img th:src="@{/member/thumbnails(fileName=${memberDTO.profileUUID})}" width="50" height="50" alt="사진"></td>
+			        <td>
+			        	<input type="file" name="uploadProfile"/>
+			        	<input type="hidden" th:field="*{profileUUID}"/>
+			        	<input type="hidden" th:field="*{profileOriginalName}"/>
+			        </td>
+		        </tr>
+				<tr>
+					<td>아이디</td>
+					<td>
+			            <input type="text" th:field="*{memberId}" readonly/>&emsp;
+			        </td>
+			    </tr>
+		        <tr>
+			        <td>이름</td>
+			        <td><input type="text" th:field="*{memberNm}"/></td>
+		        </tr>                
+			    <tr>
+			        <td>성별</td>
+			        <td>
+			        	<input type="radio" value="m" th:field="*{sex}"/>남성&emsp;&emsp;&emsp;
+						<input type="radio" value="w" th:field="*{sex}"/>여성
+			        </td>
+		        </tr>                              
+		        <tr>
+			        <td>생년월일</td>
+			        <td><input type="date" th:field="*{birthAt}"></td>
+		        </tr>                        
+		        <tr>
+			        <td>핸드폰 번호</td>
+			        <td>
+						<input type="text" th:field="*{hp}">
+						<input type="checkbox" th:field="*{smsstsYn}" value="y" />
+		                스프링에서 발송하는 SMS 소식을 수신합니다.
+			        </td>
+		        </tr>                         
+		        <tr>
+			        <td>이메일</td>
+			        <td>
+			        	<input type="email" th:field="*{email}">  
+		                <input type="checkbox" th:field="*{emailstsYn}" value="y" />
+		                스프링에서 발송하는 E-mail을 수신합니다.
+			        </td>
+		        </tr>                              
+		        <tr>
+			        <td>주소</td>
+			        <td>
+			        	<input type="text" placeholder="우편번호 입력" th:field="*{zipcode}">
+		                <input type="button" onclick="javascript:execDaumPostcode()" value="검색">
+		                <br><br>
+		                            도로명 주소 : <input type="text" th:field="*{roadAddress}" size="60"> <br>
+						지번 주소 : <input type="text"  th:field="*{jibunAddress}" size="60"> <br>
+						나머지 주소: <input type="text" th:field="*{namujiAddress}" size="60"/>
+			        </td>
+		        </tr>
+		        <tr>
+			        <td>기타</td>
+			        <td>
+			        	<textarea rows="10" cols="10" th:field="*{etc}"></textarea>
+			        	<script>CKEDITOR.replace('etc');</script>
+			        </td>
+		        </tr>                                     
+		        <tr>
+			        <td colspan="2" align="center">
+			        	<input type="submit" value="수정하기"  >
+			        </td>
+			    </tr>
+		     </table>
+	     </form>
+	     
+	     <a th:href="@{/member/mainMember}">메인으로 이동</a>
+	     
+	</div>
+</body>
+</html>
