@@ -32,7 +32,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/member")
 public class MemberContorller {
 	
-	@Value("{file.repo.path}")
+	@Value("${file.repo.path}")
 	private String fileRepositoryPath;
 	
 	@Autowired

@@ -25,7 +25,7 @@ import com.application.practice2Ver3.dto.MemberDTO;
 @Service
 public class MemberServiceImpl implements MemberSerivce {
 	
-	@Value("{file.repo.path}")
+	@Value("${file.repo.path}")
 	private String fileRepositoryPath;
 	
 	@Autowired
