@@ -74,47 +74,47 @@ WHERE
 	<update id="updateMember" parameterType="MemberDTO">
 		UPDATE
 				MEMBER
-		<set>
-			<if test='profileOriginalName != null and !profileOriginalName.equals("")'>
+	<set>
+		<if test="profileOriginalName != null and profileOriginalName != ''">
 				PROFILE_ORIGINAL_NAME = #{profileOriginalName},
 			</if>
-			<if test='profileUUID != null and !profileUUID.equals("")'>
+			<if test="profileUUID != null and profileUUID != ''">
 				PROFILE_UUID = #{profileUUID},
 			</if>
-			<if test='memberNm != null and !memberNm.equals("")'>
+			<if test="memberNm != null and memberNm != ''">
 				MEMBER_NM = #{memberNm},
 			</if>
-			<if test='sex != null and !sex.equals("")'>
+			<if test="sex != null and sex != ''">
 				SEX = #{sex}, 
 			</if>
 			<if test='birthAt != null and !birthAt.equals("")'>
 				BIRTH_AT = #{birthAt}, 
 			</if>
-			<if test='hp != null and !hp.equals("")'>
+			<if test="hp != null and hp != ''">
 				HP = #{hp},  
 			</if>
-			<if test='smsstsYn != null and !smsstsYn.equals("")'>
+			<if test="smsstsYn != null and smsstsYn != ''">
 				SMSSTS_YN = #{smsstsYn},  
 			</if>
-			<if test='email != null and !email.equals("")'>
+			<if test="email != null and email != ''">
 				EMAIL = #{email}, 
 			</if>
-			<if test='emailstsYn != null and !emailstsYn.equals("")'>
+			<if test="emailstsYn != null and emailstsYn != ''">
 				EMAILSTS_YN = #{emailstsYn},  
 			</if>
-			<if test='zipcode != null and !zipcode.equals("")'>
+			<if test="zipcode != null and zipcode != ''">
 				ZIPCODE = #{zipcode},  
 			</if>
-			<if test='roadAddress != null and !roadAddress.equals("")'>
+			<if test="roadAddress != null and roadAddress != ''">
 				ROAD_ADDRESS = #{roadAddress},
 			</if>
-			<if test='jibunAddress != null and !jibunAddress.equals("")'>
+			<if test="jibunAddress != null and jibunAddress != ''">
 				JIBUN_ADDRESS = #{jibunAddress},  
 			</if>
-			<if test='namujiAddress != null and !namujiAddress.equals("")'>
+			<if test="namujiAddress != null and namujiAddress != ''">
 				NAMUJI_ADDRESS = #{namujiAddress},  
 			</if>
-			<if test='etc != null and !etc.equals("")'>
+			<if test="etc != null and etc != ''">
 				ETC = #{etc}
 			</if>
 		</set>
