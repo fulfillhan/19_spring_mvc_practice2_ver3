@@ -157,4 +157,6 @@ WHERE
 		MEMBER_ID = #{memberId}
 </delete>
 
+
+
 </mapper>
