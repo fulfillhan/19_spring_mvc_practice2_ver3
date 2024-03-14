@@ -29,7 +29,7 @@ import jakarta.servlet.http.HttpSession;
 
 
 @Controller
-@RequestMapping("/member")
+@RequestMapping("/")
 public class MemberContorller {
 	
 	@Value("${file.repo.path}")

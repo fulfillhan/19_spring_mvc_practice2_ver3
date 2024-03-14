@@ -130,6 +130,8 @@ public class MemberServiceImpl implements MemberSerivce {
 		if(memberDTO.getSmsstsYn() == null) memberDTO.setSmsstsYn("n");
 		if(memberDTO.getEmailstsYn() == null) memberDTO.setEmailstsYn("n");
 		
+		System.out.println(memberDTO);
+		
 		memberDAO.updateMember(memberDTO);
 		
 	}
