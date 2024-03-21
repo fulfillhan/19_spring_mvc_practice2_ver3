@@ -1,7 +1,8 @@
-package com.application.practice2Ver3.conroller;
+package com.application.practice2Ver3.controller;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +30,7 @@ import jakarta.servlet.http.HttpSession;
 
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/member")
 public class MemberContorller {
 	
 	@Value("${file.repo.path}")

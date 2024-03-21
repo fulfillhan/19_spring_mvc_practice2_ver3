@@ -87,7 +87,7 @@ WHERE
 			<if test="sex != null and sex != ''">
 				SEX = #{sex}, 
 			</if>							
-			<if test='birthAt != null and !birthAt.equals("")'>
+			<if test='birthAt != null'>
 				BIRTH_AT = #{birthAt}, 
 			</if>
 			<if test="hp != null and hp != ''">
